@@ -56,6 +56,8 @@ jobs:
         
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
 
+        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/*.patch .
+        
         # 下载官方 patch
         wget https://github.com/rksuorg/kernel_patches/raw/master/manual_hook/kernel-4.14.patch -O ksu-4.14.patch || { echo "下载 patch 失败"; exit 1; }
 
