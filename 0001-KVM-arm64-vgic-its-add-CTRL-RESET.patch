@@ -34,7 +34,7 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
 +
  static void vgic_its_destroy(struct kvm_device *kvm_dev)
  {
- 	struct kvm *kvm = kvm_dev->kvm;
+ 	struct kvm *kvm = its->dev->kvm;
 @@ -1502,9 +1520,9 @@ static void vgic_mmio_write_its_baser(struct kvm *kvm,
  {
  	const struct vgic_its_abi *abi = vgic_its_get_abi(its);
@@ -42,7 +42,7 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
 +	u64 entry_size;
  	u64 reg, *regptr, clearbits = 0;
 +	int type;
- 	/* When GITS_CTLR.Enable is 1, we ignore write accesses. */
+
  	if (its->enabled)
 @@ -1514,12 +1532,12 @@ static void vgic_mmio_write_its_baser(struct kvm *kvm,
  	case 0:
@@ -66,7 +66,6 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
  	reg = vgic_sanitise_its_baser(reg);
  	*regptr = reg;
 +
-+	/* Table no longer valid: clear cached data */
 +	if (!(reg & GITS_BASER_VALID)) {
 +		switch (type) {
 +		case GITS_BASER_TYPE_DEVICE:
@@ -79,7 +78,6 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
 +			break;
 +		}
 +	}
-+
  }
 
  static void vgic_its_destroy(struct kvm_device *kvm_dev)
@@ -88,7 +86,6 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
  	kfree(kvm_dev);
  }
 +
-+/*-------------------------- ITS reset support -------------------------*/
 +static void vgic_its_reset(struct kvm *kvm, struct vgic_its *its)
 +{
 +	its->baser_device_table &= ~GITS_BASER_VALID;
@@ -103,6 +100,43 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
 +}
 +
 +static int vgic_its_ctrl(struct vgic_its *its, u64 attr)
++{
++	struct kvm *kvm = its->dev->kvm;
++	int ret = 0;
++
++	mutex_lock(&its->its_lock);
++	switch (attr) {
++	case KVM_DEV_ARM_ITS_CTRL_RESET:
++		vgic_its_reset(kvm, its);
++		break;
++	default:
++		ret = -ENXIO;
++		break;
++	}
++	mutex_unlock(&its->its_lock);
++	return ret;
++}
+
+ static int vgic_its_has_attr(struct kvm_device *dev,
+ 			     struct kvm_device_attr *attr)
+@@ -1623,6 +1686,9 @@ static int vgic_its_has_attr(struct kvm_device *dev,
+ 		case KVM_DEV_ARM_VGIC_CTRL_INIT:
+ 			return 0;
++		case KVM_DEV_ARM_ITS_CTRL_RESET:
++			return 0;
+ 		case KVM_DEV_ARM_ITS_SAVE_TABLES:
+ 			return 0;
+ 		case KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES:
+@@ -1650,6 +1716,10 @@ static void vgic_its_set_attr(struct kvm_device *dev,
+ 		switch (attr->attr) {
+ 		case KVM_DEV_ARM_VGIC_CTRL_INIT:
+ 			return 0;
++		case KVM_DEV_ARM_ITS_CTRL_RESET:
++			return vgic_its_ctrl(its, KVM_DEV_ARM_ITS_CTRL_RESET);
++
+ 		case KVM_DEV_ARM_ITS_SAVE_TABLES:
+ 			return vgic_its_save_tables(its);
+ 		case KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES:
 +{
 +	struct kvm *kvm = its->dev->kvm;
 +	int ret = 0;
