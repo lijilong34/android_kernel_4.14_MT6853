@@ -1,0 +1,35 @@
+From: Alexander Graf <graf@xxxxxxxxxx>
+
+PENDBASER and PROPBASER define the outer caching mode for LPI tables.
+The memory backing them may not be outer sharable, so we mark them as nC
+by default. This however, breaks Windows on ARM which only accepts
+SameAsInner or RaWaWb as values for outer cachability.
+
+We do today already allow the outer mode to be set to SameAsInner
+explicitly, so the easy fix is to default to that instead of nC for
+situations when an OS asks for a not fulfillable cachability request.
+
+This fixes booting Windows in KVM with vgicv3 and ITS enabled for me.
+
+Signed-off-by: Alexander Graf <graf@xxxxxxxxxx>
+Signed-off-by: Marc Zyngier <maz@xxxxxxxxxx>
+Link: https://lore.kernel.org/r/20200701140206.8664-1-graf@xxxxxxxxxx 
+---
+virt/arm/kvm/vgic/vgic-mmio-v3.c | 2 +-
+1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/virt/arm/kvm/vgic/vgic-mmio-v3.c b/virt/arm/kvm/vgic/vgic-mmio-v3.c
+index d2339a2b9fb9..5c786b915cd3 100644
+--- a/virt/arm/kvm/vgic/vgic-mmio-v3.c
++++ b/virt/arm/kvm/vgic/vgic-mmio-v3.c
+@@ -389,7 +389,7 @@ u64 vgic_sanitise_outer_cacheability(u64 field)
+	case GIC_BASER_CACHE_nC:
+		return field;
+	default:
+-		return GIC_BASER_CACHE_nC;
++		return GIC_BASER_CACHE_SameAsInner;
+	}
+}
+
+-- 
+2.27.0
