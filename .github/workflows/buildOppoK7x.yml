@@ -69,7 +69,8 @@ jobs:
         
         #应用内核kvm不完整
         echo "0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch补丁"
-        patch -p1 < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
+        patch -Np1 --force < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
+
 
     - name: 更新 ksu
       run: |
