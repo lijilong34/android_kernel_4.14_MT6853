@@ -7,7 +7,7 @@ on:
       BBR:
         type: boolean
         description: "是否启用 BBR 加速（不了解请不要启用）"
-        required: false
+        required: true
         default: false
 
     
@@ -62,6 +62,14 @@ jobs:
         # 应用 patch（-p1 是标准，忽略空格差异）
         patch -p1 < ksu-4.14.patch || { echo "patch 应用失败"; cat ksu-4.14.patch; exit 1; }
 
+        #应用kvm内核中断补丁
+        patch -p1 < window-cachability-fix.patch || { echo "patch 应用失败"; cat window-cachability-fix.patch; exit 1; }
+ 
+        #应用虚拟机不定时崩溃的修复
+        patch -p1 < window-collapse-fix.patch || { echo "patch 应用失败"; cat window-collapse-fix.patch; exit 1; }
+
+        #应用内核kvm不完整
+        patch -p1 < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
 
     - name: 更新 ksu
       run: |
