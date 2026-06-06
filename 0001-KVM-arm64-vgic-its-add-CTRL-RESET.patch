@@ -137,3 +137,4 @@ diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
  		case KVM_DEV_ARM_ITS_SAVE_TABLES:
  			return vgic_its_save_tables(its);
  		case KVM_DEV_ARM_ITS_RESTORE_TABLES:
+
