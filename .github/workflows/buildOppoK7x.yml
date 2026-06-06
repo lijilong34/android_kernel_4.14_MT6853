@@ -66,10 +66,10 @@ jobs:
         echo "window-cachability-fix.patch补丁"
         patch -p1 < window-cachability-fix.patch || { echo "patch 应用失败"; cat window-cachability-fix.patch; exit 1; }
 
-        dos2unix 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch
+        #dos2unix 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch
         #应用内核kvm不完整
-        echo "0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch补丁"
-        patch -Np1 --force < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
+        #echo "0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch补丁"
+        #patch -Np1 --force < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
 
 
     - name: 更新 ksu
