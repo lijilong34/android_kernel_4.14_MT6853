@@ -66,8 +66,8 @@ jobs:
         patch -p1 < window-cachability-fix.patch || { echo "patch 应用失败"; cat window-cachability-fix.patch; exit 1; }
  
         #应用虚拟机不定时崩溃的修复
-        patch -p1 < window-collapse-fix.patch || { echo "patch 应用失败"; cat window-collapse-fix.patch; exit 1; }
-
+        patch -p1 --ignore-whitespace < window-collapse-fix.patch || { echo "patch 应用失败"; cat window-collapse-fix.patch; exit 1; }
+        
         #应用内核kvm不完整
         patch -p1 < 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch || { echo "patch 应用失败"; cat 0001-KVM-arm64-vgic-its-add-CTRL-RESET.patch; exit 1; }
 
