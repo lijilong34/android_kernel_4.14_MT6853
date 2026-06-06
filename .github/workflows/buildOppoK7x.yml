@@ -47,7 +47,7 @@ jobs:
     - name: 下载内核源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone -b RKSU --single-branch https://github.com/sanba0519/android_kernel_4.14_MT6853.git android-kernel
+        git clone -b RKSU --single-branch https://github.com/lijilong34/android_kernel_4.14_MT6853.git android-kernel
         cd android-kernel
 
     - name: 打patch
@@ -55,8 +55,6 @@ jobs:
         echo "KSU_LOG: 开始下载并应用 RKSU 官方 4.14 patch"
         
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-
-        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/*.patch .
         
         # 下载官方 patch
         wget https://github.com/rksuorg/kernel_patches/raw/master/manual_hook/kernel-4.14.patch -O ksu-4.14.patch || { echo "下载 patch 失败"; exit 1; }
