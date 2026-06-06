@@ -1,5 +1,4 @@
 diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-index 1111111..2222222 100644
 --- a/arch/arm64/include/uapi/asm/kvm.h
 +++ b/arch/arm64/include/uapi/asm/kvm.h
 @@ -233,6 +233,7 @@
@@ -9,10 +8,9 @@ index 1111111..2222222 100644
 +#define KVM_DEV_ARM_ITS_CTRL_RESET		4
 
 diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
-index 1111111..2222222 100644
 --- a/virt/kvm/arm/vgic/vgic-its.c
 +++ b/virt/kvm/arm/vgic/vgic-its.c
-@@ -913,6 +913,24 @@ static void vgic_its_free_device(struct kvm *kvm, struct its_device *dev)
+@@ -913,6 +913,22 @@ static void vgic_its_free_device(struct kvm *kvm, struct its_device *dev)
  	kfree(dev);
  }
 
@@ -28,7 +26,6 @@ index 1111111..2222222 100644
 +/* its lock must be held */
 +static void vgic_its_free_collection_list(struct kvm *kvm, struct vgic_its *its)
 +{
-+	struct its_collection *cur, *temp;
 +	struct its_collection *cur, *temp;
 +
 +	list_for_each_entry_safe(cur, temp, &its->collection_list, coll_list)
